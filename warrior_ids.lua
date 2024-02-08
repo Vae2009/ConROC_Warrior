@@ -62,7 +62,27 @@ local ConROC_Warrior, optionMaxIds = ...;
 		ThunderClapRank4 = 8205,
 		ThunderClapRank5 = 11580,
 		ThunderClapRank6 = 11581,
-	}	
+	}
+	ids.Arms_Talent = { 
+		DeepWounds =  1, 
+		SwordSpecialization =  2, 
+		ImprovedHeroicStrike =  3, 
+		MaceSpecialization =  4, 
+		ImprovedCharge =  5, 
+		ImprovedRend =  6, 
+		ImprovedThunderClap =  7, 
+		ImprovedHamstring =  8, 
+		Deflection =  9, 
+		ImprovedOverpower =  10, 
+		AxeSpecialization =  11, 
+		SweepingStrikes =  12, 
+		PolearmSpecialization =  13, 
+		MortalStrike =  14, 
+		TwoHandedWeaponSpecialization =  15, 
+		AngerManagement =  16, 
+		TacticalMastery =  17, 
+		Impale =  18, 
+	} 
 --Fury
 	ids.Fury_Ability = {
 		BattleShoutRank1 = 6673,
@@ -107,8 +127,27 @@ local ConROC_Warrior, optionMaxIds = ...;
 		SlamRank2 = 8820,
 		SlamRank3 = 11604,
 		SlamRank4 = 11605,
-		Whirlwind = 1680,
+		Whirlwind = 1680, --lvl 36
 	}
+	ids.Fury_Talent = { 
+		ImprovedBattleShout =  1, 
+		Enrage =  2, 
+		Flurry =  3, 
+		Cruelty =  4, 
+		BoomingVoice =  5, 
+		UnbridledWrath =  6, 
+		PiercingHowl =  7, 
+		ImprovedDemoralizingShout =  8, 
+		DeathWish =  9, 
+		ImprovedCleave =  10, 
+		Bloodthirst =  11, 
+		ImprovedSlam =  12, 
+		BloodCraze =  13, 
+		ImprovedBerserkerRage =  14, 
+		ImprovedExecute =  15, 
+		ImprovedIntercept =  16, 
+		DualWieldSpecialization =  17, 
+	} 
 --Protection
 	ids.Prot_Ability = {
 		Bloodrage = 2687,
@@ -138,19 +177,52 @@ local ConROC_Warrior, optionMaxIds = ...;
 		SunderArmorRank5 = 11597,
 		Taunt = 355,
 	}
+	ids.Protection_Talent = { 
+		Anticipation =  1, 
+		Toughness =  2, 
+		IronWill =  3, 
+		ImprovedBloodrage =  4, 
+		ImprovedTaunt =  5, 
+		Defiance =  6, 
+		ImprovedShieldBlock =  7, 
+		ImprovedSunderArmor =  8, 
+		ImprovedRevenge =  9, 
+		ShieldSlam =  10, 
+		ImprovedShieldBash =  11, 
+		ImprovedShieldWall =  12, 
+		ImprovedDisarm =  13, 
+		ConcussionBlow =  14, 
+		LastStand =  15, 
+		OneHandedWeaponSpecialization =  16, 
+		ShieldSpecialization =  17, 
+	}
+	ids.Runes = {
+		VictoryRush = 402927,
+		ConsumedbyRage = 425440, -- or 425418
+		--BloodFrenzy = , --passive
+		--FlagellationBuff = 402906,
+		RagingBlow = 402911,
+		Devastate = 403196,
+		QuickStrike = 429765,
+		BloodSurge = 413380, --Phase 2 -passive -buff
+		RallyingCry = 426490, --Phase 2 -buff Health increased by 15% of maximum. for 10 sec
+	}
 -- Auras
 	ids.Player_Buff = {
 		Slam = 46916,
 		OverPower = 68051,
 		SuddenDeath = 52437,
-	
+		Bloodrage = 29131,	
+		Warbringer = 425421,
+		ConsumedbyRage = 425418,
+		BloodSurge = 413399, --Phase 2 -Heroic Strike, Bloodthirst, and Whirlwind have a 30% chance to make your next Slam within 15 sec instant and cost no Rage.
 	}
 	ids.Player_Debuff = {
-
 	}
 	ids.Target_Debuff = {
 		ExposeArmor = 8647,
 		SunderArmor = 58567,
+		Degrade = 402818,
 	}
 	ids.optionMaxIds = {
 		

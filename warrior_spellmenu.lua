@@ -36,7 +36,7 @@ local defaults = {
 	["ConROC_Melee_Shout_DemoralizingShout"] = true,
 
 	["ConROC_Melee_Rage_HeroicStrike"] = true,
-	["ConROC_Melee_Rage_Cleave"] = true,
+	["ConROC_Melee_Rage_Cleave"] = false,
 	["ConROC_Melee_Rage_Slam"] = true,
 
 }
@@ -171,7 +171,7 @@ function ConROC:SpellmenuClass()
 		{
 	    	frameName = "Options",
 	    	spells = {
-		    	{spellID = "Single/AoE Toggle Button", spellCheckbox = "Option_AoE", reqLevel = 20, type="aoetoggler"},
+		    	{spellID = "Single/AoE Toggle Button", spellCheckbox = "Option_AoE", reqLevel = 6, type="aoetoggler"},
 	    	}
 		}
 	}
@@ -753,7 +753,7 @@ function ConROC:SpellMenuUpdate(newSpell)
 						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
 					end
 					if type(_spellData.spellID) == "number" then
-						if plvl >= _spellData.reqLevel and IsSpellKnown(_spellData.spellID) then
+						if plvl >= _spellData.reqLevel and (IsSpellKnown(_spellData.spellID) or IsSpellKnownOrOverridesKnown(_spellData.spellID)) then
 							lFrame = oItem;
 							lFrame:Show();
 							if oItem:IsShown() then
@@ -841,7 +841,7 @@ function ConROC:SpellMenuUpdate(newSpell)
 					else
 						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
 					end
-					if plvl >= _spellData.reqLevel and IsSpellKnown(_spellData.spellID) then													
+					if plvl >= _spellData.reqLevel and (IsSpellKnown(_spellData.spellID) or IsSpellKnownOrOverridesKnown(_spellData.spellID)) then
 						lFrame = oItem;
 						lFrame:Show();
 							if oItem:IsShown() then
