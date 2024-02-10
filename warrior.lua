@@ -332,7 +332,7 @@ ConROC:UpdateSpellID()
 	local sBashRDY											= ConROC:AbilityReady(_ShieldBash, timeShift);	
 	local sSlamRDY											= ConROC:AbilityReady(_ShieldSlam, timeShift);	
 	local sArmorRDY											= ConROC:AbilityReady(_SunderArmor, timeShift);
-		local sArmorDEBUFF, sArmorCount							= ConROC:TargetDebuff(ids.Target_Debuff.SunderArmor, timeShift);	
+		local sArmorDEBUFF, sArmorCount							= ConROC:TargetDebuff(_SunderArmor, timeShift);	
 		local sArmorDEBUFF2		 								= ConROC:DebuffName(_SunderArmor, timeShift);	
 		local sArmorDUR											= sArmorEXP - GetTime();
 	local sWaveRDY = false;
@@ -350,7 +350,7 @@ ConROC:UpdateSpellID()
 --runes
 	local vRushRDY = ConROC:AbilityReady(_VictoryRush, timeShift);
 	local ragingBlowRDY = ConROC:AbilityReady(_RagingBlow, timeShift);
-	local devastateRDY = ConROC:AbilityReady(_Devastate, timeShift);
+	--local devastateRDY = ConROC:AbilityReady(_Devastate, timeShift);
 	local qStrikeRDY = ConROC:AbilityReady(_QuickStrike, timeShift);
 	local cbyRageBUFF, cbyRageDUR = ConROC:BuffName(ids.Player_Buff.ConsumedbyRage);
 
@@ -359,7 +359,7 @@ ConROC:UpdateSpellID()
 	local incombat 											= UnitAffectingCombat('player');	
 	local playerPh 											= ConROC:PercentHealth('player');
 	local targetPh 											= ConROC:PercentHealth('target');
-	local Close 											= CheckInteractDistance("target", 3);
+	local Close 											= IsSpellInRange(select(1,GetSpellInfo(_HeroicStrike)), "target")--CheckInteractDistance("target", 3);
 	local tarInMelee										= 0;
 	local tarInAoe											= 0;
 	local twohandIDs = {1,5,6,8,10} --Two-Handed Axes, Two-Handed Maces, Polearms, Two-Handed Swords, Saves
@@ -385,7 +385,6 @@ ConROC:UpdateSpellID()
 	ConROC:AbilityBurst(_DeathWish, dWishRDY and incombat and not ConROC:TarYou());
 	ConROC:AbilityBurst(_Recklessness, reckRDY and incombat and not ConROC:TarYou() and ((not ConROC:TalentChosen(Spec.Fury, Fury_Talent.DeathWish)) or (ConROC:TalentChosen(Spec.Fury, Fury_Talent.DeathWish) and dWishRDY)));
     
-    ConROC:AbilityInterrupt(_ShieldBash, ConROC:Interrupt() and sBashRDY)
     ConROC:AbilityInterrupt(_Pummel, ConROC:Interrupt() and pummelRDY)
 	
 --Warnings
@@ -394,7 +393,7 @@ ConROC:UpdateSpellID()
 		if vRushRDY and ConROC:Targets(_HeroicStrike) >= 1 then
 			return _VictoryRush
 		end
-		if plvl < 10 or ConROC:CheckBox(ConROC_SM_Role_Melee) then
+		if plvl < 10 or ConROC:CheckBox(ConROC_SM_Role_Melee) and not inStance == Stance.Defensive then
 			if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and bRageRDY and rage <= 75 and playerPh >= 70 and incombat then
 				return _Bloodrage;
 			end
@@ -402,7 +401,10 @@ ConROC:UpdateSpellID()
 			if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and batShoutRDY and not batShoutBUFF then
 				return _BattleShout;
 			end
-			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and sArmorRDY and not(degradeDEBUFF or expArmorDEBUFF) and (not sArmorDEBUFF2 or sArmorCount < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and rage >= 30 then
+			if inStance == Stance.Defensive and IsSpellKnownOrOverridesKnown(_Devastate) and sArmorRDY then
+				return _SunderArmor;
+			end
+			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and not IsSpellKnownOrOverridesKnown(_Devastate) and sArmorRDY and sArmorDEBUFF and sArmorCount < ConROC_SM_Debuff_SunderArmorCount:GetNumber() and not (expArmorDEBUFF or degradeDEBUFF) then
 				return _SunderArmor;
 			end
 			if ragingBlowRDY and (bRageBUFF or cbyRageBUFF) then
@@ -424,7 +426,9 @@ ConROC:UpdateSpellID()
 				return _Hamstring;
 			end
 		end
-		if ConROC:CheckBox(ConROC_SM_Role_Tank) then
+		if ConROC:CheckBox(ConROC_SM_Role_Tank) or inStance == Stance.Defensive then
+			--print("sArmorCount", sArmorCount, "sArmorCount setting:", ConROC_SM_Debuff_SunderArmorCount:GetNumber())
+			--print("IsSpellKnownOrOverridesKnown(_Devastate)", IsSpellKnownOrOverridesKnown(_Devastate))
 			if ConROC_AoEButton:IsVisible() then
 				if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and tclapRDY and not tclapDEBUFF and inStance == Stance.Battle then
 					return _ThunderClap;
@@ -439,18 +443,21 @@ ConROC:UpdateSpellID()
 			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and hStrikeRDY and rage > 95 then
 				return _HeroicStrike;
 			end
-			if devastateRDY and not revengeRDY  and inStance == Stance.Defensive then
-				return _Devastate
-			end			
-			if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and cleaveRDY and tarInMelee >= 2 then
+			if inStance == Stance.Defensive and IsSpellKnownOrOverridesKnown(_Devastate) and sArmorRDY then
+				return _SunderArmor;
+			end
+			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and not IsSpellKnownOrOverridesKnown(_Devastate) and sArmorRDY and (not sArmorDEBUFF or sArmorCount < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and not (expArmorDEBUFF or degradeDEBUFF) then
+				return _SunderArmor;
+			end
+			if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and rage > 95 and cleaveRDY and tarInMelee >= 2 then
 				return _Cleave;
 			end
-			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and hStrikeRDY and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
+			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and rage > 95 and hStrikeRDY and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
 				return _HeroicStrike;
 			end
 		end
 		return nil;
-	else
+	else --not SoD
 		if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and batShoutRDY and not batShoutBUFF then
 			return _BattleShout;
 		end
@@ -459,7 +466,7 @@ ConROC:UpdateSpellID()
 			return _Bloodrage;
 		end
 		
-		if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and sArmorRDY and sArmorDEBUFF and sArmorDUR <= 6 and not expArmorDEBUFF then
+		if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and sArmorRDY and sArmorDEBUFF and sArmorDUR <= 6 and not (expArmorDEBUFF or degradeDEBUFF) then
 			return _SunderArmor;
 		end
 
