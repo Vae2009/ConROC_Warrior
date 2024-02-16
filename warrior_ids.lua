@@ -221,7 +221,7 @@ local ConROC_Warrior, optionMaxIds = ...;
 	}
 	ids.Target_Debuff = {
 		ExposeArmor = 8647,
-		SunderArmor = 58567,
+		--SunderArmor = 58567,
 		Degrade = 402818,
 	}
 	ids.optionMaxIds = {

@@ -359,7 +359,7 @@ ConROC:UpdateSpellID()
 	local incombat 											= UnitAffectingCombat('player');	
 	local playerPh 											= ConROC:PercentHealth('player');
 	local targetPh 											= ConROC:PercentHealth('target');
-	local Close 											= IsSpellInRange(select(1,GetSpellInfo(_HeroicStrike)), "target")--CheckInteractDistance("target", 3);
+	local Close 											= ConROC:IsMeleeRange()--CheckInteractDistance("target", 3);
 	local tarInMelee										= 0;
 	local tarInAoe											= 0;
 	local twohandIDs = {1,5,6,8,10} --Two-Handed Axes, Two-Handed Maces, Polearms, Two-Handed Swords, Saves
