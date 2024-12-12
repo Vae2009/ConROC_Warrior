@@ -4,6 +4,7 @@ local ConROC_Warrior, ids = ...;
 ids.Racial = {
 	Berserking = 20554,
 	Perception = 20600,
+	Shadowmeld = 20580,
 }
 ids.Spec = {
 	Arms = 1,

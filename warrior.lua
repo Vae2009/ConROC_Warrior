@@ -42,10 +42,10 @@ local _Rage, _Rage_Max = ConROC:PlayerPower('Rage');
 --Conditions
 local _Queue = 0;
 local _is_moving = ConROC:PlayerSpeed();
---local _enemies_in_melee, _target_in_melee = ConROC:Targets("Melee");
---local _enemies_in_10yrds, _target_in_10yrds = ConROC:Targets("10");
---local _enemies_in_25yrds, _target_in_25yrds = ConROC:Targets("25");
---local _enemies_in_40yrds, _target_in_40yrds = ConROC:Targets("40");
+local _enemies_in_melee, _target_in_melee = ConROC:Targets("Melee");
+local _enemies_in_10yrds, _target_in_10yrds = ConROC:Targets("10");
+local _enemies_in_20yrds, _target_in_20yrds = ConROC:Targets("20");
+local _enemies_in_40yrds, _target_in_40yrds = ConROC:Targets("40");
 local _can_Execute = _Target_Percent_Health < 20;
 
 --Racials
@@ -66,10 +66,10 @@ function ConROC:Stats()
 
 	_Queue = 0;
 	_is_moving = ConROC:PlayerSpeed();
---	_enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
---	_enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
---	_enemies_in_25yrds, _target_in_25yrds = ConRO:Targets("25");
---	_enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
+	_enemies_in_melee, _target_in_melee = ConROC:Targets("Melee");
+	_enemies_in_10yrds, _target_in_10yrds = ConROC:Targets("10");
+	_enemies_in_20yrds, _target_in_20yrds = ConROC:Targets("20");
+	_enemies_in_40yrds, _target_in_40yrds = ConROC:Targets("40");
 	_can_Execute = _Target_Percent_Health < 20;
 
 	_Berserking, _Berserking_RDY = ConROC:AbilityReady(Racial.Berserking, timeShift);
@@ -173,7 +173,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 --Warnings
 
 --Rotations
-	--[[if ConROC.Seasons.IsSoD then
+	if ConROC.Seasons.IsSoD then
 		if _VictoryRush_RDY and ConROC:Targets(_HeroicStrike) >= 1 then
 			return _VictoryRush
 		end
@@ -241,7 +241,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 			end
 		end
 		return nil;
-	else --not SoD]]
+	else --not SoD
 		if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and not _BattleShout_BUFF then
 			return _BattleShout;
 		end
@@ -328,7 +328,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 		--elseif currentSpecID == ids.Spec.Fury then
 		--elseif currentSpecID == ids.Spec.Protection then
 		--end
-	--end
+	end
 end
 
 function ConROC.Warrior.Defense(_, timeShift, currentSpell, gcd, tChosen)
