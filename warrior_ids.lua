@@ -140,80 +140,62 @@ ids.Rank = {
 	SunderArmorRank5 = 11597,
 }
 ids.Arms_Talent = {
-	ImprovedHeroicStrike = 1,
-	Defleciton = 2,
-	ImprovedRend = 3,
-
-	ImprovedCharge = 4,
-	TacticalMastery = 5,
-	ImprovedThunderClap = 6,
-
-	ImprovedOverpower = 7,
-	AngerManagement = 8,
-	DeepWounds = 9,
-
-	TwoHandedWeaponSpecialization = 10,
-	Impale = 11,
-
-	AxeSpecialization = 12,
-	SweepingStrikes = 13,
-	MaceSpecialization = 14,
-	SwordSpecialization = 15,
-
-	PolearmSpecialization = 16,
-	ImprovedHamstring = 17,
-
-	MortalStrike = 18,
+	DeepWounds = 1,
+	SwordSpecialization = 2,
+	ImprovedHeroicStrike = 3,
+	MaceSpecialization = 4,
+	ImprovedCharge = 5,
+	ImprovedRend = 6,
+	ImprovedThunderClap = 7,
+	ImprovedHamstring = 8,
+	Deflection = 9,
+	ImprovedOverpower = 10,
+	AxeSpecialization = 11,
+	SweepingStrikes = 12,
+	PolearmSpecialization = 13,
+	MortalStrike = 14,
+	TwoHandedWeaponSpecialization = 15,
+	AngerManagement = 16,
+	TacticalMastery = 17,
+	Impale = 18,
 }
 ids.Fury_Talent = {
-	BoomingVoice = 1,
-	Cruelty = 2,
-
-	ImprovedDemoralizingShout = 3,
-	UnbridledWrath = 4,
-
-	ImprovedCleave = 5,
-	PiercingHowl = 6,
-	BloodCraze = 7,
-	ImprovedBattleShout = 8,
-
-	DualWieldSpecialization = 9,
-	ImprovedExecute = 10,
-	Enrage = 11,
-
+	ImprovedBattleShout = 1,
+	Enrage = 2,
+	Flurry = 3,
+	Cruelty = 4,
+	BoomingVoice = 5,
+	UnbridledWrath = 6,
+	PiercingHowl = 7,
+	ImprovedDemoralizingShout = 8,
+	DeathWish = 9,
+	ImprovedCleave = 10,
+	Bloodthirst = 11,
 	ImprovedSlam = 12,
-	DeathWish = 13,
-	ImprovedIntercept = 14,
-
-	ImprovedBerserkerRage = 15,
-	Flurry = 16,
-
-	Bloodthirst = 17,
+	BloodCraze = 13,
+	ImprovedBerserkerRage = 14,
+	ImprovedExecute = 15,
+	ImprovedIntercept = 16,
+	DualWieldSpecialization = 17,
 }
 ids.Protection_Talent = {
-	ShieldSpecialization = 1,
-	Anticipation = 2,
-
-	ImprovedBloodrage = 3,
-	Toughness = 4,
-	IronWill = 5,
-
-	LastStand = 6,
+	Anticipation = 1,
+	Toughness = 2,
+	IronWill = 3,
+	ImprovedBloodrage = 4,
+	ImprovedTaunt = 5,
+	Defiance = 6,
 	ImprovedShieldBlock = 7,
-	ImprovedRevenge = 8,
-	Defiance = 9,
-
-	ImprovedSunderArmor = 10,
-	ImprovedDisarm = 11,
-	ImprovedTaunt = 12,
-
-	ImprovedShieldWall = 13,
+	ImprovedSunderArmor = 8,
+	ImprovedRevenge = 9,
+	ShieldSlam = 10,
+	ImprovedShieldBash = 11,
+	ImprovedShieldWall = 12,
+	ImprovedDisarm = 13,
 	ConcussionBlow = 14,
-	ImprovedShieldBash = 15,
-
+	LastStand = 15,
 	OneHandedWeaponSpecialization = 16,
-
-	ShieldSlam = 17,
+	ShieldSpecialization = 17,
 }
 ids.Runes = {
 	VictoryRush = 402927,

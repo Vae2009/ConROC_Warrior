@@ -90,7 +90,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 		local _Overpower_BUFF, _, _Overpower_DUR = ConROC:Aura(Buff.Overpower, timeshift)
 	local _SweepingStrikes, _SweepingStrikes_RDY = ConROC:AbilityReady(Ability.SweepingStrikes, timeShift);
 	local _Rend, _Rend_RDY = ConROC:AbilityReady(Ability.Rend, timeShift);
-		local _Rend_DEBUFF = ConROC:TargetAura(_Rend, timeShift);
+		local _Rend_DEBUFF, _, _Rend_DUR = ConROC:TargetAura(_Rend, timeShift);
 
 	local _BattleShout, _BattleShout_RDY = ConROC:AbilityReady(Ability.BattleShout, timeShift);
 		local _BattleShout_BUFF	= ConROC:Aura(_BattleShout, timeShift);
