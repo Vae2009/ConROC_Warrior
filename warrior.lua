@@ -185,57 +185,70 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 			if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and not _BattleShout_BUFF then
 				return _BattleShout;
 			end
+
 			if inStance == Stance.Defensive and _SunderArmor_RDY then
 				return _SunderArmor;
 			end
+
 			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _SunderArmor_DEBUFF and _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber() and not (_ExposeArmor_UP or _Degrade_UP) then
 				return _SunderArmor;
 			end
+
 			if _RagingBlow_RDY and (_Bloodrage_BUFF or _ConsumedbyRage_BUFF) then
 				return _RagingBlow
 			end
+
 			if _Overpower_RDY and inStance == Stance.Battle then
 				return _Overpower;
 			end
+
 			if twoHand and _QuickStrike_RDY and (_Rage > 80 or _ConsumedbyRage_BUFF)  then
 				return _QuickStrike;
-			end			
+			end
+
 			if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and tarInMelee >= 2 then
 				return _Cleave;
-			end	
+			end
+
 			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
 				return _HeroicStrike;
 			end
+
 			if dualWielding and ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and inStance == (Stance.Battle or Stance.Berserker) then
 				return _Hamstring;
 			end
 		end
 		if ConROC:CheckBox(ConROC_SM_Role_Tank) or inStance == Stance.Defensive then
-			--print("_SunderArmor_COUNT", _SunderArmor_COUNT, "_SunderArmor_COUNT setting:", ConROC_SM_Debuff_SunderArmorCount:GetNumber())
-			--print("IsSpellKnownOrOverridesKnown(_Devastate)", IsSpellKnownOrOverridesKnown(_Devastate))
 			if ConROC_AoEButton:IsVisible() then
 				if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and _ThunderClap_RDY and not _ThunderClap_DEBUFF and inStance == Stance.Battle then
 					return _ThunderClap;
-				end 
+				end
 			end
+
 			if _Revenge_RDY then
 				return _Revenge
 			end
+
 			if _ShieldBlock_RDY and not _ShieldBlock_BUFF then
 				return _ShieldBlock
 			end
+
 			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage > 95 then
 				return _HeroicStrike;
 			end
-			if inStance == Stance.Defensive and IsSpellKnownOrOverridesKnown(_Devastate) and _SunderArmor_RDY then
+
+			if inStance == Stance.Defensive and _SunderArmor_RDY then
 				return _SunderArmor;
 			end
-			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and not IsSpellKnownOrOverridesKnown(_Devastate) and _SunderArmor_RDY and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and not (_ExposeArmor_UP or _Degrade_UP) then
+
+			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and not (_ExposeArmor_UP or _Degrade_UP) then
 				return _SunderArmor;
 			end
+
 			if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Rage > 95 and _Cleave_RDY and tarInMelee >= 2 then
 				return _Cleave;
 			end
+
 			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _Rage > 95 and _HeroicStrike_RDY and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
 				return _HeroicStrike;
 			end
