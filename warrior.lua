@@ -185,10 +185,10 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 			if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and not _BattleShout_BUFF then
 				return _BattleShout;
 			end
-			if inStance == Stance.Defensive and IsSpellKnownOrOverridesKnown(_Devastate) and _SunderArmor_RDY then
+			if inStance == Stance.Defensive and _SunderArmor_RDY then
 				return _SunderArmor;
 			end
-			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and not IsSpellKnownOrOverridesKnown(_Devastate) and _SunderArmor_RDY and _SunderArmor_DEBUFF and _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber() and not (_ExposeArmor_UP or _Degrade_UP) then
+			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _SunderArmor_DEBUFF and _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber() and not (_ExposeArmor_UP or _Degrade_UP) then
 				return _SunderArmor;
 			end
 			if _RagingBlow_RDY and (_Bloodrage_BUFF or _ConsumedbyRage_BUFF) then
