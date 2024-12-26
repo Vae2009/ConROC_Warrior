@@ -8,7 +8,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("ConROC");
 
 local ConROC_Warrior, ids = ...;
 local ConROC_RolesTable = {};
-local wandFrame = 0;
 local lastFrame = 0;
 
 local showOptions = false;
@@ -141,6 +140,7 @@ function ConROC:SpellmenuClass()
 	    		{spellID = ids.Ability.SunderArmor, spellCheckbox = "Debuff_SunderArmorCount", reqLevel = 10, type="textfield", icon = ids.Ability.SunderArmor, customName="Number of Sunders"},				
 				{spellID = ids.Ability.Bloodrage, spellCheckbox = "Shout_Bloodrage", reqLevel = 10, type="spell"},
 				{spellID = ids.Ability.DemoralizingShout, spellCheckbox = "Shout_DemoralizingShout", reqLevel = 14, type="spell"},
+				{spellID = ids.Runes.CommandingShout, spellCheckbox = "Shout_CommandingShout", reqLevel = 1, type="spell"},
 			},
 			groupType = "checkBoxes"
 		},
@@ -778,37 +778,6 @@ function ConROC:SpellMenuUpdate(newSpell)
 						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 					end
 				--spell end
-				elseif _spellData.type == "wand" then
-					--Use Wand
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
-					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
-					end
-					if _Player_Level >= _spellData.reqLevel then
-						lFrame = oItem;
-						lFrame:Show();
-							if oItem:IsShown() then
-								anyChildVisible = true;
-								scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-								spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-						    end
-						local role, checkboxName, frameName = ConROC:checkActiveRole()
-	            		local spellName = "ConROC_" .. frameName .. "_" .. _spellData.spellCheckbox
-						if (not HasWandEquipped()) and (ConROC:CheckBox(role) and ConROCWarriorSpells[spellName]) then 
-							flashMessage()
-						end
-					else
-						if j == firstItem then
-							if j == #_spells then
-								--print("all section spells hidden")
-							else
-								firstItem = j + 1;
-							end
-						end
-						oItem:Hide();
-					end
 				elseif _spellData.type == "aoetoggler" then
 					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
 					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
@@ -949,18 +918,6 @@ function ConROC:SpellMenuUpdate(newSpell)
 	end
 end
 
-function flashMessage()
-	if HasWandEquipped() then
-		return
-	end
-	ConROC:DisplayErrorMessage("You should equip a wand!", 3.0, 0.5, 0.5, 1.0)
-	if not HasWandEquipped() then
-		C_Timer.After(4, function()
-			flashMessage()
-		end);
-	end
-end
-
 function ConROC:RoleProfile()
 	local activeRole, _, frameName = ConROC:checkActiveRole()
 
@@ -993,5 +950,3 @@ function ConROC:RoleProfile()
 	    end
 	end
 end
-
-ConROC:SpellmenuClass();
