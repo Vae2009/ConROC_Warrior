@@ -233,13 +233,13 @@ ids.Runes = {
 	RagingBlow = 402911,
 	RallyingCry = 426490,
 	Rampage = 426940,
+	QuickStrike = 429765,
 
 	VictoryRush = 402927,
 	ConsumedbyRage = 425440, -- or 425418
 	--BloodFrenzy = , --passive
 	--FlagellationBuff = 402906,
 	Devastate = 403195, --passive
-	QuickStrike = 429765,
 	BloodSurge = 413380, --Phase 2 -passive -buff
 }
 -- Auras

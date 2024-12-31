@@ -107,8 +107,8 @@ local function CheckScrollbarVisibility()
     end
 end
 
-function ConROC:SpellmenuClass()
-	ConROC:UpdateSpellID();
+function ConROC:RotationChoices()
+    ConROC:UpdateSpellID();
 	ConROC_RoleSettingsTable = {
 		{
 			frameName = "Melee",
@@ -176,6 +176,9 @@ function ConROC:SpellmenuClass()
 	    	}
 		}
 	}
+end
+function ConROC:SpellmenuClass()
+	ConROC:RotationChoices();
 
 	local _, Class, classId = UnitClass("player")
 	local Color = RAID_CLASS_COLORS[Class]
@@ -717,108 +720,51 @@ function ConROC:OptionNone(_spellData, i, j, _spellFrame, _checkType, _radioButt
     lastFrame:Show();
 end
 
-function ConROC:SpellMenuUpdate(newSpell)
-	ConROC:UpdateSpellID();
-	if newSpell then ConROC:UpdateSpellID() end
+function ConROC:SpellMenuUpdate()
+	ConROC:RotationChoices();
+
 	lastFrame = ConROCScrollChild;
 	local anyHLVisible = false;
 	scrollHeight = 0;
 	local _table = ConROC_RotationSettingsTable;
 	local firstHeadline = 1;
 	for i = 1, #_table do
-			local anyChildVisible = false;
-		    local frame = _G["ConROC_CheckHeader"..i]
-		    if i == firstHeadline then
-		    	frame:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0)
-			else
-		    	frame:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, -10)
-		    	--scrollHeight = scrollHeight + 10;
-			end
-			--scrollHeight = scrollHeight + math.ceil(frame:GetHeight());
-			frame:Show()
+		local anyChildVisible = false;
+		local frame = _G["ConROC_CheckHeader"..i]
+		if i == firstHeadline then
+			frame:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0)
+		else
+			frame:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, -10)
+			--scrollHeight = scrollHeight + 10;
+		end
+		--scrollHeight = scrollHeight + math.ceil(frame:GetHeight());
+		frame:Show()
 
-		   	local spellFrameHeight = 0;
-		    local _spellFrame = _G["ConROC_CheckFrame"..i];
-			_spellFrame:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
-			local lFrame = _spellFrame;
-		    local _spells = _table[i].spells
-	    	local firstItem = 1;
-		    for j = 1, #_spells do
-		    	local _spellData = _spells[j]
-				if _spellData.type == "spell" then
-					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
-					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
-					end
-					if type(_spellData.spellID) == "number" then
-						if _Player_Level >= _spellData.reqLevel and (IsSpellKnown(_spellData.spellID) or IsSpellKnownOrOverridesKnown(_spellData.spellID)) then
-							lFrame = oItem;
-							lFrame:Show();
-							if oItem:IsShown() then
-								anyChildVisible = true;
-								scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-								spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-						    end
-						else
-							if j == firstItem then
-								if j == #_spells then
-									--print("all section spells hidden")
-								else
-									firstItem = j + 1;
-								end
-							end
-							oItem:Hide()
-							--print("Hide spell", spellName)
-						end
-					else
-						scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-					end
-				--spell end
-				elseif _spellData.type == "aoetoggler" then
-					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
-					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
-					end
-					if _Player_Level >= _spellData.reqLevel then
-						lFrame = oItem;
-						lFrame:Show();
-							if oItem:IsShown() then
-								anyChildVisible = true;
-								scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-								spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-						    end
-					else
-						if j == firstItem then
-							if j == #_spells then
-								--print("all section spells hidden")
-							else
-								firstItem = j + 1;
-							end
-						end
-						oItem:Hide()
-					end
-				elseif _spellData.type == "textfield" then
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox.."Frame"]
-					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
-					end
+		local spellFrameHeight = 0;
+		local _spellFrame = _G["ConROC_CheckFrame"..i];
+		_spellFrame:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
+		local lFrame = _spellFrame;
+		local _spells = _table[i].spells
+		local firstItem = 1;
+		for j = 1, #_spells do
+			local _spellData = _spells[j]
+			if _spellData.type == "spell" then
+				local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+				local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
+				if j == firstItem then
+					oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
+				else
+					oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+				end
+				if type(_spellData.spellID) == "number" then
 					if _Player_Level >= _spellData.reqLevel and (IsSpellKnown(_spellData.spellID) or IsSpellKnownOrOverridesKnown(_spellData.spellID)) then
 						lFrame = oItem;
 						lFrame:Show();
-							if oItem:IsShown() then
-								anyChildVisible = true;
-								scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-								spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-						    end
+						if oItem:IsShown() then
+							anyChildVisible = true;
+							scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
+							spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
+						end
 					else
 						if j == firstItem then
 							if j == #_spells then
@@ -828,83 +774,143 @@ function ConROC:SpellMenuUpdate(newSpell)
 							end
 						end
 						oItem:Hide()
+						--print("Hide spell", spellName)
 					end
-                elseif _spellData.type == "custom" then
-					--local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
-					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
-					end
-					if _Player_Level >= _spellData.reqLevel then
-						lFrame = oItem;
+				else
+					scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
+					spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
+				end
+			--spell end
+			elseif _spellData.type == "aoetoggler" then
+				local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+				local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
+				if j == firstItem then
+					oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
+				else
+					oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+				end
+				if _Player_Level >= _spellData.reqLevel then
+					lFrame = oItem;
+					lFrame:Show();
+					if oItem:IsShown() then
+						anyChildVisible = true;
 						scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
 						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-						lFrame:Show();
-                        anyChildVisible = true;
-					else
-						if j == firstItem then
-							if j == #_spells then
-								--print("all section spells hidden")
-							else
-								firstItem = j + 1;
-							end
-						end
-						--print("Hiding", spellName)
-						oItem:Hide()
 					end
-				elseif _spellData.type == "none" then
-					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
-					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
+				else
 					if j == firstItem then
-						oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
-					else
-						oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+						if j == #_spells then
+							--print("all section spells hidden")
+						else
+							firstItem = j + 1;
+						end
 					end
-					if _Player_Level >= _spellData.reqLevel and anyChildVisible then
-                        lFrame = oItem;
-                        oItem:Show();
-                    else
-                        oItem:Hide();
-                    end                    
-                    if oItem:IsShown() then
-                        --anyChildVisible = true;
-                        scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
-                        spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
-                    end
+					oItem:Hide()
 				end
-				if anyChildVisible then
-					lastFrame = _spellFrame;
-					_spellFrame:SetHeight(spellFrameHeight);
+			elseif _spellData.type == "textfield" then
+				local oItem = _G["ConROC_SM_".._spellData.spellCheckbox.."Frame"]
+				if j == firstItem then
+					oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
+				else
+					oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+				end
+				if _Player_Level >= _spellData.reqLevel and (IsSpellKnown(_spellData.spellID) or IsSpellKnownOrOverridesKnown(_spellData.spellID)) then
+					lFrame = oItem;
+					lFrame:Show();
+					if oItem:IsShown() then
+						anyChildVisible = true;
+						scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
+						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
+					end
+				else
+					if j == firstItem then
+						if j == #_spells then
+							--print("all section spells hidden")
+						else
+							firstItem = j + 1;
+						end
+					end
+					oItem:Hide()
+				end
+			elseif _spellData.type == "custom" then
+				--local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+				local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
+				if j == firstItem then
+					oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
+				else
+					oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+				end
+				if _Player_Level >= _spellData.reqLevel then
+					lFrame = oItem;
+					scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
+					spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
+					lFrame:Show();
+					anyChildVisible = true;
+				else
+					if j == firstItem then
+						if j == #_spells then
+							--print("all section spells hidden")
+						else
+							firstItem = j + 1;
+						end
+					end
+					--print("Hiding", spellName)
+					oItem:Hide()
+				end
+			elseif _spellData.type == "none" then
+				local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+				local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
+				if j == firstItem then
+					oItem:SetPoint("TOPLEFT", lFrame, "TOPLEFT", 0, 0);
+				else
+					oItem:SetPoint("TOPLEFT", lFrame, "BOTTOMLEFT", 0, 0);
+				end
+				if _Player_Level >= _spellData.reqLevel and anyChildVisible then
+					lFrame = oItem;
+					oItem:Show();
+				else
+					oItem:Hide();
+				end                    
+				if oItem:IsShown() then
+					--anyChildVisible = true;
+					scrollHeight = scrollHeight + math.ceil(lFrame:GetHeight());
+					spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 				end
 			end
-
 			if anyChildVisible then
-					--print("-- FRAME to show", frame:GetName())
-					if i > firstHeadline then scrollHeight = scrollHeight + 10; end
-					scrollHeight = scrollHeight + math.ceil(frame:GetHeight());
-					frame:Show();
-					anyHLVisible = true;
-				else
-					--print("-- FRAME to hide", frame:GetName())
-					frame:Hide();
-					if i == firstHeadline then
-						firstHeadline = i +1;
-					end
-				end
-		end
-		if not anyHLVisible then
-			ConROC_NoOptionsFrame();
-			ConROC_NoOptions:Show();
-			scrollHeight = ConROCNoOptions:GetHeight()
-		else
-			if ConROCNoOptions then
-    			ConROC_NoOptions:Hide();
-    		end
+				lastFrame = _spellFrame;
+				_spellFrame:SetHeight(spellFrameHeight);
+			end
 		end
 
-		ConROCScrollChild:SetHeight(scrollHeight);
+		if anyChildVisible then
+			--print("-- FRAME to show", frame:GetName())
+			if i > firstHeadline then
+				scrollHeight = scrollHeight + 10;
+			end
+			scrollHeight = scrollHeight + math.ceil(frame:GetHeight());
+			frame:Show();
+			anyHLVisible = true;
+		else
+			--print("-- FRAME to hide", frame:GetName())
+			frame:Hide();
+			if i == firstHeadline then
+				firstHeadline = i +1;
+			end
+		end
+	end
+
+	if not anyHLVisible then
+		ConROC_NoOptionsFrame();
+		ConROC_NoOptions:Show();
+		scrollHeight = ConROCNoOptions:GetHeight()
+	else
+		if ConROCNoOptions then
+			ConROC_NoOptions:Hide();
+		end
+	end
+
+	ConROCScrollChild:SetHeight(scrollHeight);
 
 	-- Update for scrolling window -- Start
 	if fixOptionsWidth then
@@ -913,9 +919,6 @@ function ConROC:SpellMenuUpdate(newSpell)
 		ConROCScrollContainer:Show();
 		ConROCScrollChild:Show();
     end
-	if newSpell then
-		ConROC:closeSpellmenu();
-	end
 end
 
 function ConROC:RoleProfile()

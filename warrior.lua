@@ -9,7 +9,9 @@ function ConROC:EnableRotationModule()
 	self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
 	self.lastSpellId = 0;
 
-	ConROC:SpellmenuClass();
+	if ConROCSpellmenuClass == nil then
+		ConROC:SpellmenuClass();
+	end
 end
 
 function ConROC:EnableDefenseModule()
@@ -81,6 +83,7 @@ end
 
 function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 	ConROC:UpdateSpellID();
+	wipe(ConROC.SuggestedSpells);
 	ConROC:Stats();
 
 --Abilities
@@ -162,7 +165,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 
 --print("dualWielding", dualWielding)
 --Indicators		
-	ConROC:AbilityMovement(_Charge, _Charge_RDY and _Charge_RANGE and (ConROC:RuneEquipped(Engrave.Warbringer, "chest") or (not _in_combat and _in_stance == Stance.Battle)));
+	ConROC:AbilityMovement(_Charge, _Charge_RDY and _Charge_RANGE and ((ConROC:RuneEquipped(Engrave.Warbringer, "chest") or (not _in_combat and _in_stance == Stance.Battle))));
 	ConROC:AbilityMovement(_Intercept, _Intercept_RDY and _Intercept_RANGE and _in_stance == Stance.Berserker);
 	ConROC:AbilityTaunt(_HeroicStrike, ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 30 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)))); --Felt looks better then Burst.
 	ConROC:AbilityTaunt(_Cleave, ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 40 and _enemies_in_melee >= 2);
@@ -177,215 +180,430 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 --Warnings
 
 --Rotations
-	if ConROC.Seasons.IsSoD then
-		if ConROC:CheckBox(ConROC_SM_Role_Tank) or _in_stance == Stance.Defensive then
-			if ConROC_AoEButton:IsVisible() then
-				if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and _ThunderClap_RDY and not _ThunderClap_DEBUFF and _in_stance == Stance.Battle then
-					return _ThunderClap;
+	repeat
+		while(true) do
+			if ConROC.Seasons.IsSoD then
+				if ConROC:CheckBox(ConROC_SM_Role_Tank) or _in_stance == Stance.Defensive then
+					if ConROC_AoEButton:IsVisible() then
+						if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and _ThunderClap_RDY and _Rage >= 20 and not _ThunderClap_DEBUFF and _in_stance == Stance.Battle then
+							tinsert(ConROC.SuggestedSpells, _ThunderClap);
+							_ThunderClap_RDY = false;
+							_ThunderClap_DEBUFF = true;
+							_Rage = _Rage - 20;
+							_Queue = _Queue + 1;
+							break;
+						end
+					end
+
+					if _Revenge_RDY and _Rage >= 5 then
+						tinsert(ConROC.SuggestedSpells, _Revenge);
+						_Revenge_RDY = false;
+						_Rage = _Rage - 5;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if _ShieldBlock_RDY and _Rage >= 10 and not _ShieldBlock_BUFF then
+						tinsert(ConROC.SuggestedSpells, _ShieldBlock);
+						_ShieldBlock_RDY = false;
+						_Rage = _Rage - 10;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and _Rage > 95 then
+						tinsert(ConROC.SuggestedSpells, _HeroicStrike);
+						_HeroicStrike_RDY = false;
+						_Rage = _Rage - 15;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if _in_stance == Stance.Defensive and _SunderArmor_RDY and _Rage >= 15 then
+						tinsert(ConROC.SuggestedSpells, _SunderArmor);
+						_Rage = _Rage - 15;
+						_SunderArmor_DEBUFF = true;
+						_SunderArmor_COUNT = _SunderArmor_COUNT + 1;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _Rage >= 15 and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and not (_ExposeArmor_UP or _Degrade_UP) then
+						tinsert(ConROC.SuggestedSpells, _SunderArmor);
+						_Rage = _Rage - 15;
+						_SunderArmor_DEBUFF = true;
+						_SunderArmor_COUNT = _SunderArmor_COUNT + 1;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 20 and _Rage > 95 and _enemies_in_melee >= 2 then
+						tinsert(ConROC.SuggestedSpells, _Cleave);
+						_Cleave_RDY = false;
+						_Rage = _Rage - 20;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and _Rage > 95 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
+						tinsert(ConROC.SuggestedSpells, _HeroicStrike);
+						_HeroicStrike_RDY = false;
+						_Rage = _Rage - 15;
+						_Queue = _Queue + 1;
+						break;
+					end
+
+					tinsert(ConROC.SuggestedSpells, 26008); --Waiting Spell Icon
+					_Queue = _Queue + 3;
+					break;
 				end
+
+				if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and _Bloodrage_RDY and _Rage <= 75 and _Player_Percent_Health >= 70 and _in_combat then
+					tinsert(ConROC.SuggestedSpells, _Bloodrage);
+					_Bloodrage_RDY = false;
+					_Rage = _Rage + 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _Rage >= 15 and not (_ExposeArmor_UP or _Degrade_UP) and ((_SunderArmor_DEBUFF and _SunderArmor_DUR <= 6) or not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) then
+					tinsert(ConROC.SuggestedSpells, _SunderArmor);
+					_Rage = _Rage - 15;
+					_SunderArmor_DEBUFF = true;
+					_SunderArmor_COUNT = _SunderArmor_COUNT + 1;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and _Rage >= 10 and not _BattleShout_BUFF then
+					tinsert(ConROC.SuggestedSpells, _BattleShout);
+					_BattleShout_BUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Whirlwind_RDY and _Rage >= 25 and _enemies_in_melee >= 3 and _in_stance == Stance.Berserker then
+					tinsert(ConROC.SuggestedSpells, _Whirlwind);
+					_Whirlwind_RDY = false;
+					_Rage = _Rage - 25;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Execute_RDY and _Rage >= 15 and (_Target_Percent_Health <= 20 or _SuddenDeath_BUFF) and _in_stance == (Stance.Battle or Stance.Berserker) then
+					tinsert(ConROC.SuggestedSpells, _Execute);
+					_SuddenDeath_BUFF = false;
+					_Rage = _Rage - 15;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Slam_RDY and (_BloodSurge_BUFF or (_Rage >= 15 and ConROC:RuneEquipped(Engrave.PreciseTiming, "waist"))) then
+					tinsert(ConROC.SuggestedSpells, _Slam);
+					if ConROC:RuneEquipped(Engrave.PreciseTiming, "waist") then
+						_Slam_RDY = false;
+					end
+					if not _BloodSurge_BUFF then
+						_Rage = _Rage - 15;
+					end
+					_BloodSurge_BUFF = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _DeathWish_RDY and _Rage >= 10 and _in_combat and not ConROC:TarYou() then
+					tinsert(ConROC.SuggestedSpells, _DeathWish);
+					_DeathWish_RDY = false;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Rampage_RDY and _Enraged then
+					tinsert(ConROC.SuggestedSpells, _Rampage);
+					_Rampage_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Bloodthirst_RDY and _Rage >= 30 then
+					tinsert(ConROC.SuggestedSpells, _Bloodthirst);
+					_Bloodthirst_RDY = false;
+					_Rage = _Rage - 30;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Overpower_RDY and _Rage >= 5 and _in_stance == Stance.Battle then
+					tinsert(ConROC.SuggestedSpells, _Overpower);
+					_Overpower_RDY = false;
+					_Rage = _Rage - 5;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _MortalStrike_RDY and _Rage >= 30 then
+					tinsert(ConROC.SuggestedSpells, _MortalStrike);
+					_MortalStrike_RDY = false;
+					_Rage = _Rage - 30;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Whirlwind_RDY and _Rage >= 25 and _in_stance == Stance.Berserker then
+					tinsert(ConROC.SuggestedSpells, _Whirlwind);
+					_Whirlwind_RDY = false;
+					_Rage = _Rage - 25;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _RagingBlow_RDY and _Enraged then
+					tinsert(ConROC.SuggestedSpells, _RagingBlow);
+					_RagingBlow_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and _Rage >= 10 and not _Rend_DEBUFF and _in_stance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
+					tinsert(ConROC.SuggestedSpells, _Rend);
+					_Rend_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if dualWielding and _Hamstring_RDY and _Rage >= 10 and ConROC:HasWindfury() and _in_stance == (Stance.Battle or Stance.Berserker) then
+					tinsert(ConROC.SuggestedSpells, _Hamstring);
+					_Hamstring_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_PiercingHowl) and _PiercingHowl_RDY and _Rage >= 10 and not _PiercingHowl_DEBUFF and not _Hamstring_DEBUFF and _enemies_in_melee >= 2 then
+					tinsert(ConROC.SuggestedSpells, _PiercingHowl);
+					_PiercingHowl_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and _Rage >= 10 and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and _in_stance == (Stance.Battle or Stance.Berserker) then
+					tinsert(ConROC.SuggestedSpells, _Hamstring);
+					_Hamstring_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_ConcussionBlow) and _ConcussionBlow_RDY then
+					tinsert(ConROC.SuggestedSpells, _ConcussionBlow);
+					_ConcussionBlow_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if twoHand and _QuickStrike_RDY and _Rage >= 20 and (_Rage > 80 or _Enrage_BUFF) then
+					tinsert(ConROC.SuggestedSpells, _QuickStrike);
+					_Rage = _Rage - 20;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and (_Rage > 80 or _Enrage_BUFF) and _enemies_in_melee >= 2 then
+					tinsert(ConROC.SuggestedSpells, _Cleave);
+					_Cleave_RDY = false;
+					_Rage = _Rage - 20;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and (_Rage > 80 or _Enrage_BUFF) then
+					tinsert(ConROC.SuggestedSpells, _HeroicStrike);
+					_HeroicStrike_RDY = false;
+					_Rage = _Rage - 15;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				tinsert(ConROC.SuggestedSpells, 26008); --Waiting Spell Icon
+				_Queue = _Queue + 3;
+				break;
+			else --not SoD
+				if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and _Rage >= 10 and not _BattleShout_BUFF then
+					tinsert(ConROC.SuggestedSpells, _BattleShout);
+					_BattleShout_BUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and _Bloodrage_RDY and _Rage <= 75 and _Player_Percent_Health >= 70 and _in_combat then
+					tinsert(ConROC.SuggestedSpells, _Bloodrage);
+					_Bloodrage_RDY = false;
+					_Rage = _Rage + 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _Rage >= 15 and _SunderArmor_DEBUFF and _SunderArmor_DUR <= 6 and not (_ExposeArmor_UP or _Degrade_UP) then
+					tinsert(ConROC.SuggestedSpells, _SunderArmor);
+					_Rage = _Rage - 15;
+					_SunderArmor_DEBUFF = true;
+					_SunderArmor_COUNT = _SunderArmor_COUNT + 1;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Whirlwind_RDY and _Rage >= 25 and _enemies_in_melee >= 3 and _in_stance == Stance.Berserker then
+					tinsert(ConROC.SuggestedSpells, _Whirlwind);
+					_Whirlwind_RDY = false;
+					_Rage = _Rage - 25;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Execute_RDY and _Rage >= 15 and _Target_Percent_Health <= 20 and _in_stance == (Stance.Battle or Stance.Berserker) then
+					tinsert(ConROC.SuggestedSpells, _Execute);
+					_Rage = _Rage - 15;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Overpower_RDY and _Rage >= 5 and _in_stance == Stance.Battle then
+					tinsert(ConROC.SuggestedSpells, _Overpower);
+					_Overpower_RDY = false;
+					_Rage = _Rage - 5;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Revenge_RDY and _in_stance == Stance.Defensive then
+					tinsert(ConROC.SuggestedSpells, _Revenge);
+					_Revenge_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Bloodthirst_RDY and _Rage >= 30 then
+					tinsert(ConROC.SuggestedSpells, _Bloodthirst);
+					_Bloodthirst_RDY = false;
+					_Rage = _Rage - 30;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:TalentChosen(Spec.Fury, Fury_Talent.Bloodthirst) then
+					if _Whirlwind_RDY and _Rage >= 25 and _Bloodthirst_CD > 2 and _in_stance == Stance.Berserker then
+						tinsert(ConROC.SuggestedSpells, _Whirlwind);
+						_Whirlwind_RDY = false;
+						_Rage = _Rage - 25;
+						_Queue = _Queue + 1;
+						break;
+					end
+				else
+					if _Whirlwind_RDY and _Rage >= 25 and _in_stance == Stance.Berserker then
+						tinsert(ConROC.SuggestedSpells, _Whirlwind);
+						_Whirlwind_RDY = false;
+						_Rage = _Rage - 25;
+						_Queue = _Queue + 1;
+						break;
+					end
+				end
+
+				if _ShieldSlam_RDY and _Rage >= 20 and ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
+					tinsert(ConROC.SuggestedSpells, _ShieldSlam);
+					_ShieldSlam_RDY = false;
+					_Rage = _Rage - 20;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _MortalStrike_RDY and _Rage >= 30 then
+					tinsert(ConROC.SuggestedSpells, _MortalStrike);
+					_MortalStrike_RDY = false;
+					_Rage = _Rage - 30;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and _Rage >= 10 and not _Rend_DEBUFF and _in_stance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
+					tinsert(ConROC.SuggestedSpells, _Rend);
+					_Rend_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _Rage >= 15 and not _ExposeArmor_UP and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and _Rage >= 30 then
+					tinsert(ConROC.SuggestedSpells, _SunderArmor);
+					_Rage = _Rage - 15;
+					_SunderArmor_DEBUFF = true;
+					_SunderArmor_COUNT = _SunderArmor_COUNT + 1;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_PiercingHowl) and _PiercingHowl_RDY and _Rage >= 10 and not _PiercingHowl_DEBUFF and not _Hamstring_DEBUFF and _enemies_in_melee >= 2 then
+					tinsert(ConROC.SuggestedSpells, _PiercingHowl);
+					_PiercingHowl_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and _Rage >= 10 and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and _in_stance == (Stance.Battle or Stance.Berserker) then
+					tinsert(ConROC.SuggestedSpells, _Hamstring);
+					_Hamstring_DEBUFF = true;
+					_Rage = _Rage - 10;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Stun_ConcussionBlow) and _ConcussionBlow_RDY then
+					tinsert(ConROC.SuggestedSpells, _ConcussionBlow);
+					_ConcussionBlow_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 85 and _enemies_in_melee >= 2 then
+					tinsert(ConROC.SuggestedSpells, _Cleave);
+					_Cleave_RDY = false;
+					_Rage = _Rage - 20;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Rage_Slam) and _Slam_RDY and _Rage >= 15 and not ConROC:TarYou() then
+					tinsert(ConROC.SuggestedSpells, _Slam);
+					_Rage = _Rage - 15;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 85 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
+					tinsert(ConROC.SuggestedSpells, _HeroicStrike);
+					_HeroicStrike_RDY = false;
+					_Rage = _Rage - 15;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				tinsert(ConROC.SuggestedSpells, 26008); --Waiting Spell Icon
+				_Queue = _Queue + 3;
+				break;
 			end
-
-			if _Revenge_RDY then
-				return _Revenge
-			end
-
-			if _ShieldBlock_RDY and not _ShieldBlock_BUFF then
-				return _ShieldBlock
-			end
-
-			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage > 95 then
-				return _HeroicStrike;
-			end
-
-			if _in_stance == Stance.Defensive and _SunderArmor_RDY then
-				return _SunderArmor;
-			end
-
-			if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and not (_ExposeArmor_UP or _Degrade_UP) then
-				return _SunderArmor;
-			end
-
-			if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Rage > 95 and _Cleave_RDY and _enemies_in_melee >= 2 then
-				return _Cleave;
-			end
-
-			if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _Rage > 95 and _HeroicStrike_RDY and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
-				return _HeroicStrike;
-			end
-		return nil;
 		end
-
-		if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and _Bloodrage_RDY and _Rage <= 75 and _Player_Percent_Health >= 70 and _in_combat then
-			return _Bloodrage;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _Rage >= 15 and not (_ExposeArmor_UP or _Degrade_UP) and ((_SunderArmor_DEBUFF and _SunderArmor_DUR <= 6) or not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) then
-			return _SunderArmor;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and not _BattleShout_BUFF then
-			return _BattleShout;
-		end
-
-		if _Whirlwind_RDY and _enemies_in_melee >= 3 and _in_stance == Stance.Berserker then
-			return _Whirlwind;
-		end
-
-		if _Execute_RDY and (_Target_Percent_Health <= 20 or _SuddenDeath_BUFF) and _in_stance == (Stance.Battle or Stance.Berserker) then
-			return _Execute;
-		end
-
-		if _Slam_RDY and (_BloodSurge_BUFF or ConROC:RuneEquipped(Engrave.PreciseTiming, "waist")) then
-			return _Slam;
-		end
-
-		if _DeathWish_RDY and _in_combat and not ConROC:TarYou() then
-			return _DeathWish;
-		end
-
-		if _Rampage_RDY and _Enraged then
-			return _Rampage;
-		end
-
-		if _Bloodthirst_RDY then
-			return _Bloodthirst;
-		end
-
-		if _Overpower_RDY and _in_stance == Stance.Battle then
-			return _Overpower;
-		end
-
-		if _MortalStrike_RDY then
-			return _MortalStrike;
-		end
-
-		if _Whirlwind_RDY and _in_stance == Stance.Berserker then
-			return _Whirlwind;
-		end
-
-		if _RagingBlow_RDY and _Enraged then
-			return _RagingBlow
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and not _Rend_DEBUFF and _in_stance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
-			return _Rend;
-		end
-
-		if dualWielding and _Hamstring_RDY and ConROC:HasWindfury() and _in_stance == (Stance.Battle or Stance.Berserker) then
-			return _Hamstring;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_PiercingHowl) and _PiercingHowl_RDY and not _PiercingHowl_DEBUFF and not _Hamstring_DEBUFF and _enemies_in_melee >= 2 then
-			return _PiercingHowl;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and _in_stance == (Stance.Battle or Stance.Berserker) then
-			return _Hamstring;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_ConcussionBlow) and _ConcussionBlow_RDY then
-			return _ConcussionBlow;
-		end
-
-		if twoHand and _QuickStrike_RDY and (_Rage > 80 or _Enrage_BUFF)  then
-			return _QuickStrike;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and (_Rage > 80 or _Enrage_BUFF) and _enemies_in_melee >= 2 then
-			return _Cleave;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and (_Rage > 80 or _Enrage_BUFF) then
-			return _HeroicStrike;
-		end
-	else --not SoD
-		if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and _BattleShout_RDY and not _BattleShout_BUFF then
-			return _BattleShout;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and _Bloodrage_RDY and _Rage <= 75 and _Player_Percent_Health >= 70 and _in_combat then
-			return _Bloodrage;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and _SunderArmor_DEBUFF and _SunderArmor_DUR <= 6 and not (_ExposeArmor_UP or _Degrade_UP) then
-			return _SunderArmor;
-		end
-
-		if _Whirlwind_RDY and _enemies_in_melee >= 3 and _in_stance == Stance.Berserker then
-			return _Whirlwind;
-		end
-
-		if _Execute_RDY and _Target_Percent_Health <= 20 and _in_stance == (Stance.Battle or Stance.Berserker) then
-			return _Execute;
-		end
-
-		if _Overpower_RDY and _in_stance == Stance.Battle then
-			return _Overpower;
-		end
-
-		if _Revenge_RDY and _in_stance == Stance.Defensive then
-			return _Revenge;
-		end
-
-		if _Bloodthirst_RDY then
-			return _Bloodthirst;
-		end
-
-		if ConROC:TalentChosen(Spec.Fury, Fury_Talent.Bloodthirst) then
-			if _Whirlwind_RDY and _Bloodthirst_CD > 2 and _in_stance == Stance.Berserker then
-				return _Whirlwind;
-			end
-		else
-			if _Whirlwind_RDY and _in_stance == Stance.Berserker then
-				return _Whirlwind;
-			end
-		end
-
-		if _ShieldSlam_RDY and ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-			return _ShieldSlam;
-		end
-
-		if _MortalStrike_RDY then
-			return _MortalStrike;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and not _Rend_DEBUFF and _in_stance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
-			return _Rend;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and _SunderArmor_RDY and not _ExposeArmor_UP  and (not _SunderArmor_DEBUFF or _SunderArmor_COUNT < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and _Rage >= 30 then
-			return _SunderArmor;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_PiercingHowl) and _PiercingHowl_RDY and not _PiercingHowl_DEBUFF and not _Hamstring_DEBUFF and _enemies_in_melee >= 2 then
-			return _PiercingHowl;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and _in_stance == (Stance.Battle or Stance.Berserker) then
-			return _Hamstring;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Stun_ConcussionBlow) and _ConcussionBlow_RDY then
-			return _ConcussionBlow;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 85 and _enemies_in_melee >= 2 then
-			return _Cleave;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Rage_Slam) and _Slam_RDY and not ConROC:TarYou() then
-			return _Slam;
-		end
-
-		if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 85 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
-			return _HeroicStrike;
-		end
-	end
+	until _Queue >= 3;
 return nil;
 end
 
 function ConROC.Warrior.Defense(_, timeShift, currentSpell, gcd)
 	ConROC:UpdateSpellID();
+	wipe(ConROC.SuggestedDefSpells);
 	ConROC:Stats();
 
 --Abilities	
@@ -409,11 +627,6 @@ function ConROC.Warrior.Defense(_, timeShift, currentSpell, gcd)
 
 --Conditions	
 	local _in_stance = GetShapeshiftForm();
-	local _enemies_in_melee = 0;
-
-	if IsSpellKnown(Ability.Taunt) then
-		_enemies_in_melee = ConROC:Targets(Ability.Taunt);
-	end
 
 --Indicators
 	ConROC:AbilityTaunt(_Taunt, ConROC:CheckBox(ConROC_SM_Role_Tank) and _Taunt_RDY and _in_stance == Stance.Defensive and not ConROC:TarYou());
@@ -422,31 +635,31 @@ function ConROC.Warrior.Defense(_, timeShift, currentSpell, gcd)
 
 --Rotations	
 	if _LastStand_RDY and _in_combat and _Player_Percent_Health <= 35 then
-		return _LastStand;
+		tinsert(ConROC.SuggestedDefSpells, _LastStand);
 	end
 
 	if _ShieldWall_RDY and _in_stance == Stance.Defensive and _Player_Percent_Health <= 25 and ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-		return _ShieldWall;
+		tinsert(ConROC.SuggestedDefSpells, _ShieldWall);
 	end
 
 	if _ShieldBlock_RDY and not _ShieldBlock_BUFF and _in_stance == Stance.Defensive then
-		return _ShieldBlock;
+		tinsert(ConROC.SuggestedDefSpells, _ShieldBlock);
 	end
 
 	if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and _ThunderClap_RDY and not _ThunderClap_DEBUFF and _in_stance == Stance.Battle then
-		return _ThunderClap;
+		tinsert(ConROC.SuggestedDefSpells, _ThunderClap);
 	end
 
 	if _BerserkerRage_RDY and _in_stance == Stance.Berserker then
-		return _BerserkerRage;
+		tinsert(ConROC.SuggestedDefSpells, _BerserkerRage);
 	end
 
 	if ConROC:CheckBox(ConROC_SM_Shout_DemoralizingShout) and _DemoralizingShout_RDY and not (_DemoralizingShout_UP or _DemoralizingRoar_UP) then
-		return _DemoralizingShout;
+		tinsert(ConROC.SuggestedDefSpells, _DemoralizingShout);
 	end
 
 	if _Retaliation_RDY and _in_combat and _in_stance == Stance.Battle and not ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-		return _Retaliation;
+		tinsert(ConROC.SuggestedDefSpells, _Retaliation);
 	end
 return nil;
 end
