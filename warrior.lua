@@ -673,7 +673,7 @@ end
 
 function ConROC:HasWindfury()
 	local _Windfury_Present = false;
-	local _Windfury_IDs = {2636,3785,3786,3787};
+	local _Windfury_IDs = {2636,3785,3786,3787,7141};
 	local _has_Imbue, _, _, _Imbuement = GetWeaponEnchantInfo();
 	if _has_Imbue then
 		for _, v in pairs(_Windfury_IDs) do
