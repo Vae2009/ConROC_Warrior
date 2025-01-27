@@ -362,4 +362,9 @@ function ConROC:UpdateSpellID()
 	elseif IsSpellKnown(ids.Rank.SunderArmorRank4) then ids.Ability.SunderArmor = ids.Rank.SunderArmorRank4;
 	elseif IsSpellKnown(ids.Rank.SunderArmorRank3) then ids.Ability.SunderArmor = ids.Rank.SunderArmorRank3;
 	elseif IsSpellKnown(ids.Rank.SunderArmorRank2) then ids.Ability.SunderArmor = ids.Rank.SunderArmorRank2; end
+
+	if IsSpellKnown(ids.Rank.DemoralizingShoutRank5) then ids.Ability.DemoralizingShout = ids.Rank.DemoralizingShoutRank5;
+	elseif IsSpellKnown(ids.Rank.DemoralizingShoutRank4) then ids.Ability.DemoralizingShout = ids.Rank.DemoralizingShoutRank4;
+	elseif IsSpellKnown(ids.Rank.DemoralizingShoutRank3) then ids.Ability.DemoralizingShout = ids.Rank.DemoralizingShoutRank3;
+	elseif IsSpellKnown(ids.Rank.DemoralizingShoutRank2) then ids.Ability.DemoralizingShout = ids.Rank.DemoralizingShoutRank2; end
 end

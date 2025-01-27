@@ -133,20 +133,21 @@ function ConROC:RotationChoices()
 		{
 			frameName = "Shouts and Debuffs",
 			spells = {
-				{spellID = ids.Ability.BattleShout, spellCheckbox = "Shout_BattleShout", reqLevel = 1, type="spell"},
-				{spellID = ids.Ability.Rend, spellCheckbox = "Debuff_Rend", reqLevel = 4, type="spell"},
-				{spellID = ids.Ability.ThunderClap, spellCheckbox = "Debuff_ThunderClap", reqLevel = 6, type="spell"},
-				{spellID = ids.Ability.SunderArmor, spellCheckbox = "Debuff_SunderArmor", reqLevel = 10, type="spell"},
-	    		{spellID = ids.Ability.SunderArmor, spellCheckbox = "Debuff_SunderArmorCount", reqLevel = 10, type="textfield", icon = ids.Ability.SunderArmor, customName="Number of Sunders"},				
-				{spellID = ids.Ability.Bloodrage, spellCheckbox = "Shout_Bloodrage", reqLevel = 10, type="spell"},
-				{spellID = ids.Ability.DemoralizingShout, spellCheckbox = "Shout_DemoralizingShout", reqLevel = 14, type="spell"},
-				{spellID = ids.Runes.CommandingShout, spellCheckbox = "Shout_CommandingShout", reqLevel = 1, type="spell"},
+				{spellID = ids.Ability.BattleShout, spellCheckbox = "Shout_BattleShout", reqLevel = 1, type = "spell"},
+				{spellID = ids.Runes.CommandingShout, spellCheckbox = "Shout_CommandingShout", reqLevel = 1, type = "spell"},
+				{spellID = ids.Ability.DemoralizingShout, spellCheckbox = "Shout_DemoralizingShout", reqLevel = 14, type = "spell"},
+				{spellID = ids.Ability.Bloodrage, spellCheckbox = "Shout_Bloodrage", reqLevel = 10, type = "spell"},
+				{spellID = ids.Ability.Rend, spellCheckbox = "Debuff_Rend", reqLevel = 4, type = "spell"},
+				{spellID = ids.Ability.ThunderClap, spellCheckbox = "Debuff_ThunderClap", reqLevel = 6, type = "spell"},
+				{spellID = ids.Ability.SunderArmor, spellCheckbox = "Debuff_SunderArmor", reqLevel = 10, type = "spell"},
+	    		{spellID = ids.Ability.SunderArmor, spellCheckbox = "Debuff_SunderArmorCount", reqLevel = 10, type = "textfield", icon = ids.Ability.SunderArmor, customName = "Number of Sunders"},
 			},
 			groupType = "checkBoxes"
 		},
 		{
 			frameName = "Rage Dump",
 			spells = {
+				{spellID = ids.Ability.Execute, spellCheckbox = "Rage_Execute", reqLevel = 24, type="spell"},
 				{spellID = ids.Ability.HeroicStrike, spellCheckbox = "Rage_HeroicStrike", reqLevel = 1, type="spell"},
 				{spellID = ids.Ability.Cleave, spellCheckbox = "Rage_Cleave", reqLevel = 20, type="spell"},
 				{spellID = ids.Ability.Slam, spellCheckbox = "Rage_Slam", reqLevel = 30, type="spell"},
