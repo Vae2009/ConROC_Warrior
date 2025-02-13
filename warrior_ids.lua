@@ -310,7 +310,8 @@ function ConROC:UpdateSpellID()
 		elseif IsSpellKnown(ids.Rank.ThunderClapRank5) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank5;
 		elseif IsSpellKnown(ids.Rank.ThunderClapRank4) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank4;
 		elseif IsSpellKnown(ids.Rank.ThunderClapRank3) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank3;
-		elseif IsSpellKnown(ids.Rank.ThunderClapRank2) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank2; end
+		elseif IsSpellKnown(ids.Rank.ThunderClapRank2) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank2;
+		elseif IsSpellKnown(ids.Rank.ThunderClapRank1) then ids.Ability.ThunderClap = ids.Rank.ThunderClapRank1; end
 	end
 
 	--Fury

@@ -1,5 +1,5 @@
 ## Title:-|cffFFFFFFConROC|r- |cffC79C6EWarrior|r
-## Version: 1.15.19
+## Version: 1.15.20
 ## Author: Vae
 ## Interface: 11506
 ## SavedVariablesPerCharacter: ConROCWarriorSpells
