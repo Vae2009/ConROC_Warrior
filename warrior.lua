@@ -137,7 +137,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 	local _ShieldBash, _ShieldBash_RDY = ConROC:AbilityReady(Ability.ShieldBash, timeShift);
 	local _ShieldSlam, _ShieldSlam_RDY = ConROC:AbilityReady(Ability.ShieldSlam, timeShift);
 	local _SunderArmor, _SunderArmor_RDY = ConROC:AbilityReady(Ability.SunderArmor, timeShift);
-		local _SunderArmor_DEBUFF, _SunderArmor_COUNT, _SunderArmor_DUR = ConROC:TargetAura(_SunderArmor, timeShift);
+		local _, _SunderArmor_COUNT, _SunderArmor_DUR, _SunderArmor_DEBUFF = ConROC:TargetAura(_SunderArmor, timeShift);
 	local sWaveRDY = false;
 
 	local _ThunderClap, _ThunderClap_RDY = ConROC:AbilityReady(Ability.ThunderClap, timeShift);
