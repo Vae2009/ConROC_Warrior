@@ -176,8 +176,8 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 --Indicators		
 	ConROC:AbilityMovement(_Charge, _Charge_RDY and _Charge_RANGE and ((ConROC:RuneEquipped(Engrave.Warbringer, "chest") or (not _in_combat and _in_stance == Stance.Battle))));
 	ConROC:AbilityMovement(_Intercept, _Intercept_RDY and _Intercept_RANGE and _in_stance == Stance.Berserker);
-	ConROC:AbilityTaunt(_HeroicStrike, ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 30 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)))); --Felt looks better then Burst.
-	ConROC:AbilityTaunt(_Cleave, ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 40 and _enemies_in_melee >= 2);
+	ConROC:AbilityTaunt(_HeroicStrike, ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and not IsCurrentSpell(_HeroicStrike) and _Rage >= 30 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)))); --Felt looks better then Burst.
+	ConROC:AbilityTaunt(_Cleave, ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and not IsCurrentSpell(_Cleave) and _Rage >= 40 and _enemies_in_melee >= 2);
 
 	ConROC:AbilityBurst(_SweepingStrikes, _SweepingStrikes_RDY and _in_stance == Stance.Battle and _enemies_in_melee >= 2);
 	ConROC:AbilityBurst(_DeathWish, _DeathWish_RDY and _in_combat and not ConROC:TarYou());
@@ -221,7 +221,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 						break;
 					end
 
-					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and _Rage > 95 then
+					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and not IsCurrentSpell(_HeroicStrike) and _Rage >= 15 and _Rage > 95 then
 						tinsert(ConROC.SuggestedSpells, _HeroicStrike);
 						_HeroicStrike_RDY = false;
 						_Rage = _Rage - 15;
@@ -264,7 +264,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 						break;
 					end
 
-					if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 20 and _Rage > 95 and _enemies_in_melee >= 2 then
+					if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and not IsCurrentSpell(_Cleave) and _Rage >= 20 and _Rage > 95 and _enemies_in_melee >= 2 then
 						tinsert(ConROC.SuggestedSpells, _Cleave);
 						_Cleave_RDY = false;
 						_Rage = _Rage - 20;
@@ -272,7 +272,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 						break;
 					end
 
-					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and _Rage > 95 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
+					if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and not IsCurrentSpell(_HeroicStrike) and _Rage >= 15 and _Rage > 95 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
 						tinsert(ConROC.SuggestedSpells, _HeroicStrike);
 						_HeroicStrike_RDY = false;
 						_Rage = _Rage - 15;
@@ -456,7 +456,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and (_Rage > 80 or _Enrage_BUFF) and _enemies_in_melee >= 2 then
+				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and not IsCurrentSpell(_Cleave) and (_Rage > 80 or _Enrage_BUFF) and _enemies_in_melee >= 2 then
 					tinsert(ConROC.SuggestedSpells, _Cleave);
 					_Cleave_RDY = false;
 					_Rage = _Rage - 20;
@@ -464,7 +464,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 15 and (_Rage > 80 or _Enrage_BUFF) then
+				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and not IsCurrentSpell(_HeroicStrike) and _Rage >= 15 and (_Rage > 80 or _Enrage_BUFF) then
 					tinsert(ConROC.SuggestedSpells, _HeroicStrike);
 					_HeroicStrike_RDY = false;
 					_Rage = _Rage - 15;
@@ -630,7 +630,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and _Rage >= 85 and _enemies_in_melee >= 2 then
+				if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and _Cleave_RDY and not IsCurrentSpell(_Cleave) and _Rage >= 85 and _enemies_in_melee >= 2 then
 					tinsert(ConROC.SuggestedSpells, _Cleave);
 					_Cleave_RDY = false;
 					_Rage = _Rage - 20;
@@ -645,7 +645,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and _Rage >= 85 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
+				if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and _HeroicStrike_RDY and not IsCurrentSpell(_HeroicStrike) and _Rage >= 85 and ((_enemies_in_melee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (_enemies_in_melee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) then
 					tinsert(ConROC.SuggestedSpells, _HeroicStrike);
 					_HeroicStrike_RDY = false;
 					_Rage = _Rage - 15;
