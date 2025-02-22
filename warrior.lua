@@ -92,7 +92,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 
 --Abilities
 	local _BattleShout, _BattleShout_RDY = ConROC:AbilityReady(Ability.BattleShout, timeShift);
-		local _BattleShout_BUFF	= ConROC:Aura(_BattleShout, timeShift);
+		local _, _, _, _BattleShout_BUFF = ConROC:Aura(_BattleShout, timeShift);
 	local _BerserkerRage, _BerserkerRage_RDY = ConROC:AbilityReady(Ability.BerserkerRage, timeShift);
 	local _Bloodrage, _Bloodrage_RDY = ConROC:AbilityReady(Ability.Bloodrage, timeShift);
 		local _Bloodrage_BUFF = ConROC:Aura(Buff.Bloodrage, timeShift);
@@ -170,6 +170,15 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 
 	if _DeathWish_BUFF or _Enrage_BUFF or _Bloodrage_BUFF then
 		_Enraged = true;
+	end
+
+	local _Execute_COST = 15
+	if ConROC:TalentChosen(Spec.Fury, Fury_Talent.ImprovedExecute) then
+		if select(2, ConROC:TalentChosen(Spec.Fury, Fury_Talent.ImprovedExecute)) == 1 then
+			_Execute_COST = 12
+		elseif select(2, ConROC:TalentChosen(Spec.Fury, Fury_Talent.ImprovedExecute)) == 2 then
+			_Execute_COST = 10
+		end
 	end
 
 --print("dualWielding", dualWielding)
@@ -318,10 +327,10 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_Execute) and _Execute_RDY and _Rage >= 15 and (_Target_Percent_Health <= 20 or _SuddenDeath_BUFF) and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
+				if ConROC:CheckBox(ConROC_SM_Rage_Execute) and _Execute_RDY and _Rage >= _Execute_COST and (_Target_Percent_Health <= 20 or _SuddenDeath_BUFF) and _enemies_in_melee == 1 and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
 					tinsert(ConROC.SuggestedSpells, _Execute);
 					_SuddenDeath_BUFF = false;
-					_Rage = _Rage - 15;
+					_Rage = _Rage - _Execute_COST;
 					_Queue = _Queue + 1;
 					break;
 				end
@@ -401,7 +410,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if dualWielding and _Hamstring_RDY and _Rage >= 10 and ConROC:HasWindfury() and _in_stance == (Stance.Battle or Stance.Berserker) then
+				if dualWielding and _Hamstring_RDY and _Rage >= 10 and ConROC:HasWindfury() and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
 					tinsert(ConROC.SuggestedSpells, _Hamstring);
 					_Hamstring_DEBUFF = true;
 					_Rage = _Rage - 10;
@@ -509,9 +518,9 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Rage_Execute) and _Execute_RDY and _Rage >= 15 and _Target_Percent_Health <= 20 and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
+				if ConROC:CheckBox(ConROC_SM_Rage_Execute) and _Execute_RDY and _Rage >= _Execute_COST and _Target_Percent_Health <= 20 and _enemies_in_melee == 1 and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
 					tinsert(ConROC.SuggestedSpells, _Execute);
-					_Rage = _Rage - 15;
+					_Rage = _Rage - _Execute_COST;
 					_Queue = _Queue + 1;
 					break;
 				end
@@ -573,7 +582,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and _Rage >= 10 and not _Rend_DEBUFF and _in_stance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
+				if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and _Rend_RDY and _Rage >= 10 and not _Rend_DEBUFF and (_in_stance == Stance.Battle or _in_stance == Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
 					tinsert(ConROC.SuggestedSpells, _Rend);
 					_Rend_DEBUFF = true;
 					_Rage = _Rage - 10;
@@ -598,7 +607,7 @@ function ConROC.Warrior.Damage(_, timeShift, currentSpell, gcd)
 					break;
 				end
 
-				if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and _Rage >= 10 and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and _in_stance == (Stance.Battle or Stance.Berserker) then
+				if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and _Hamstring_RDY and _Rage >= 10 and not _Hamstring_DEBUFF and not _PiercingHowl_DEBUFF and (_in_stance == Stance.Battle or _in_stance == Stance.Berserker) then
 					tinsert(ConROC.SuggestedSpells, _Hamstring);
 					_Hamstring_DEBUFF = true;
 					_Rage = _Rage - 10;
